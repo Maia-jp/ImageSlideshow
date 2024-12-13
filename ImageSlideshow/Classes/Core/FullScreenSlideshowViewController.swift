@@ -83,7 +83,11 @@ open class FullScreenSlideshowViewController: UIViewController {
         view.addSubview(closeButton)
         
         // share button configuration
-        shareButton.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
+        if #available(iOS 13.0, *) {
+            shareButton.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
+        } else {
+            shareButton.setImage(UIImage(named: "ic_share", in: .module, compatibleWith: nil), for: .normal)
+        }
         shareButton.tintColor = .white
         shareButton.addTarget(self, action: #selector(share), for: .touchUpInside)
         view.addSubview(shareButton)
