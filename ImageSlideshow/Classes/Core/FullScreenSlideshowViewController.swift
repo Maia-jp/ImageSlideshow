@@ -24,9 +24,15 @@ open class FullScreenSlideshowViewController: UIViewController {
 
     /// Close button 
     open var closeButton = UIButton()
+    
+    /// Share button
+    open var shareButton = UIButton()
 
     /// Close button frame
     open var closeButtonFrame: CGRect?
+    
+    /// Share button frame
+    open var shareButtonFrame: CGRect?
 
     /// Closure called on page selection
     open var pageSelected: ((_ page: Int) -> Void)?
@@ -75,6 +81,12 @@ open class FullScreenSlideshowViewController: UIViewController {
         closeButton.setImage(UIImage(named: "ic_cross_white", in: .module, compatibleWith: nil), for: UIControlState())
         closeButton.addTarget(self, action: #selector(FullScreenSlideshowViewController.close), for: UIControlEvents.touchUpInside)
         view.addSubview(closeButton)
+        
+        // share button configuration
+        shareButton.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
+        shareButton.tintColor = .white
+        shareButton.addTarget(self, action: #selector(share), for: .touchUpInside)
+        view.addSubview(shareButton)
     }
 
     override open var prefersStatusBarHidden: Bool {
@@ -109,6 +121,7 @@ open class FullScreenSlideshowViewController: UIViewController {
             }
 
             closeButton.frame = closeButtonFrame ?? CGRect(x: max(10, safeAreaInsets.left), y: max(10, safeAreaInsets.top), width: 40, height: 40)
+            shareButton.frame = shareButtonFrame ?? CGRect(x: view.frame.width - 50 - max(10, safeAreaInsets.right), y: max(10, safeAreaInsets.top), width: 40, height: 40)
         }
 
         slideshow.frame = view.frame
@@ -121,5 +134,14 @@ open class FullScreenSlideshowViewController: UIViewController {
         }
 
         dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func share() {
+        guard let currentItem = slideshow.currentSlideshowItem,
+              let image = currentItem.imageView.image else { return }
+        
+        let activityViewController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = shareButton
+        present(activityViewController, animated: true)
     }
 }
